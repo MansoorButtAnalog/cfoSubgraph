@@ -1,0 +1,64 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: cfoPayFactory
+    network: fuji
+    source:
+      address: "0x61EaB811891b6F8d461eeCb1FF3bB3082128D54C"
+      abi: cfoPayFactory
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - cfoPayFactory
+        - cfoPayContract
+      abis:
+        - name: cfoPayFactory
+          file: ./abis/cfoPayFactory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: cfoPayCreated(address,address)
+          handler: oncfoPayCreated
+      file: ./src/mappings/cfoPayFactory.ts
+
+templates:
+  - kind: ethereum/contract
+    name: cfoPay
+    network: fuji
+    source:
+      abi: cfoPay
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - cfoPayFactory
+        - cfoPayContract
+      abis:
+        - name: cfoPay
+          file: ./abis/cfoPay.json
+        - name: cfoPayFactory
+          file: ./abis/cfoPayFactory.json
+      eventHandlers:
+        - event: StreamCreated(indexed address,indexed address,uint216,bytes32)
+          handler: onStreamCreated
+        - event: StreamCancelled(indexed address,indexed address,uint216,bytes32)
+          handler: onStreamCancelled
+        - event: StreamModified(indexed address,indexed address,uint216,bytes32,indexed address,uint216,bytes32)
+          handler: onStreamModified
+        - event: Withdraw(indexed address,indexed address,uint216,bytes32,uint256)
+          handler: onWithdraw
+        - event: PayerDeposit(indexed address,uint256)
+          handler: onPayerDeposit
+        - event: PayerWithdraw(indexed address,uint256)
+          handler: onPayerWithdraw
+        - event: StreamCreatedWithReason(indexed address,indexed address,uint216,bytes32,string)
+          handler: onStreamCreatedWithReason
+        - event: StreamPaused(indexed address,indexed address,uint216,bytes32)
+          handler: onStreamPaused
+      file: ./src/mappings/cfoPay.ts

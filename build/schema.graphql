@@ -1,0 +1,70 @@
+type cfoPayFactory @entity {
+  id: ID!
+  count: Int!
+  address: Bytes!
+  contracts: [cfoPayContract!]! @derivedFrom(field: "factory")
+  createdTimestamp: BigInt!
+  createdBlock: BigInt!
+}
+
+type cfoPayContract @entity {
+  id: ID!
+  address: Bytes!
+  factory: cfoPayFactory!
+  token: Token!
+  streams: [Stream!]! @derivedFrom(field: "contract")
+  createdTimestamp: BigInt!
+  createdBlock: BigInt!
+}
+
+type Stream @entity {
+  id: ID!
+  streamId: Bytes!
+  contract: cfoPayContract!
+  users: [User!]!
+  payer: User!
+  payee: User!
+  token: Token!
+  amountPerSec: BigInt!
+  active: Boolean!
+  paused: Boolean!
+  lastPaused: BigInt!
+  pausedAmount: BigInt!
+  reason: String
+  historicalEvents: [HistoryEvent!]! @derivedFrom(field: "stream")
+  createdTimestamp: BigInt!
+  createdBlock: BigInt!
+}
+
+type User @entity {
+  id: ID!
+  address: Bytes!
+  streams: [Stream!]! @derivedFrom(field: "users")
+  historicalEvents: [HistoryEvent!]! @derivedFrom(field: "users")
+  createdTimestamp: BigInt!
+  createdBlock: BigInt!
+}
+
+type HistoryEvent @entity {
+  id: ID!
+  txHash: Bytes!
+  eventType: String!
+  users: [User!]!
+  token: Token!
+  stream: Stream
+  oldStream: Stream 
+  amount: BigInt
+  createdTimestamp: BigInt!
+  createdBlock: BigInt!
+}
+
+type Token @entity {
+  id: ID!
+  address: Bytes!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  contract: cfoPayContract!
+  createdTimestamp: BigInt!
+  createdBlock: BigInt!
+}

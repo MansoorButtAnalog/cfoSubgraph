@@ -1,0 +1,8 @@
+{
+  "fuji": {
+    "cfoFactory": {
+      "address": "0x61EaB811891b6F8d461eeCb1FF3bB3082128D54C",
+      "startBlock": 0
+    }
+  }
+}
